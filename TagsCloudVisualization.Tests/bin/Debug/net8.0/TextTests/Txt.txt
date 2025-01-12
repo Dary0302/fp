@@ -1,0 +1,6 @@
+test
+read
+text
+from
+txt
+file
