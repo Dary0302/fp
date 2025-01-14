@@ -6,6 +6,7 @@ using TagsCloudVisualization.CloudLayouters;
 using TagsCloudVisualization.Filters;
 using TagsCloudVisualization.Generators;
 using TagsCloudVisualization.Interfaces;
+using TagsCloudVisualization.Models;
 using TagsCloudVisualization.Models.Settings;
 using TagsCloudVisualization.Readers;
 using TagsCloudVisualization.Savers;
@@ -23,7 +24,9 @@ RegisterFileReaders(builder);
 
 var build = builder.Build();
 var tagCloudImageGenerator = build.Resolve<TagCloudImageGenerator>();
-tagCloudImageGenerator.GenerateCloud();
+tagCloudImageGenerator
+    .GenerateCloud()
+    .OnFail(Console.WriteLine);
 
 return;
 

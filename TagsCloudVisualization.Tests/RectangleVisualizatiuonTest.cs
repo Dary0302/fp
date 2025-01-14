@@ -12,6 +12,7 @@ public class RectangleVisualizatiuonTest
     [SetUp]
     public void SetUp()
     {
+        #pragma warning disable CA1416
         drawer = new RectangleVisualizatiuon(1500, 1500);
     }
 
@@ -19,7 +20,7 @@ public class RectangleVisualizatiuonTest
     public void CreateImage_WhenListOfRectanglesIsNull_ThrowsArgumentException()
     {
         var action = () => drawer.CreateImage(null!);
-        action.Should().Throw<ArgumentNullException>();
+        action.Invoke().Error.Should().Be("No elements to draw");
     }
 
     [TestCase(-1, 1)]
@@ -30,5 +31,6 @@ public class RectangleVisualizatiuonTest
     {
         var action = () => new RectangleVisualizatiuon(width, height);
         action.Should().Throw<ArgumentException>();
+        #pragma warning restore CA1416
     }
 }

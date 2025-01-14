@@ -2,11 +2,13 @@ using System.Drawing;
 using System.Text;
 using FakeItEasy;
 using FluentAssertions;
+using ICSharpCode.SharpZipLib;
 using NUnit.Framework;
 using TagsCloudVisualization.CloudLayouters;
 using TagsCloudVisualization.Filters;
 using TagsCloudVisualization.Generators;
 using TagsCloudVisualization.Interfaces;
+using TagsCloudVisualization.Models;
 using TagsCloudVisualization.Models.Settings;
 using TagsCloudVisualization.Readers;
 using TagsCloudVisualization.Savers;
@@ -19,6 +21,7 @@ public class TagCloudImageGeneratorTests
     [Test]
     public void GenerateCloud_ShouldMatchReferenceImage()
     {
+        #pragma warning disable CA1416
         var saver = new ImageSaver();
         var saveSettings = new SaveSettings("ImagesTests", "test", "png");
         var textSettings = new TextSettings(8, 100);
@@ -37,17 +40,33 @@ public class TagCloudImageGeneratorTests
 
         generator.GenerateCloud();
 
-        #pragma warning disable CA1416
         var generatedImage = new Bitmap(@"ImagesTests\correctImage.png");
         var referenceImage = new Bitmap(@"ImagesTests\test.png");
-        #pragma warning restore CA1416
 
         CompareImages(generatedImage, referenceImage).Should().BeTrue();
+    }
+    
+    [TestCase(101, 1, 1)]
+    [TestCase(100, 100, 100)]
+    public void GenerateBitmap_WithRectangleOutsideTheBorders_ShouldReturnValueOutOfRangeException(int fontSizeFirst, int fontSizeSecond, int fontSizeThird)
+    {
+        var layouter = new CircularCloudLayouter(new ArchimedeanSpiralPositionGenerator(new SpiralGeneratorSettings(40, 2, new Point(50, 50))));
+        var settings = new BitmapGeneratorSettings(new Size(100, 100), Color.Black, Color.Peru, FontFamily.GenericSansSerif);
+        var bitmapGenerator = new BitmapGenerator(layouter, settings);
+        var words = new List<TagWord>
+        {
+            new("test", fontSizeFirst),
+            new("sunny", fontSizeSecond),
+            new("wetly", fontSizeThird)
+        };
+
+        var action = () => bitmapGenerator.GenerateBitmap(words);
+
+        action.Should().Throw<ValueOutOfRangeException>();
     }
 
     private static bool CompareImages(Bitmap img1, Bitmap img2)
     {
-        #pragma warning disable CA1416
         if (img1.Width != img2.Width || img1.Height != img2.Height)
             return false;
 

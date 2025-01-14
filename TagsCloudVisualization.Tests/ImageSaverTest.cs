@@ -20,6 +20,7 @@ public class ImageSaverTest
     [SetUp]
     public void SetUp()
     {
+        #pragma warning disable CA1416
         var mockPositionGenerator = A.Fake<IPositionGenerator>();
         cloudLayouter = new CircularCloudLayouter(mockPositionGenerator);
         drawer = new RectangleVisualizatiuon(1500, 1500);
@@ -32,7 +33,7 @@ public class ImageSaverTest
     {
         drawer.CreateImage(cloudLayouter.Rectangles);
         var action = () => imageSaver.SaveImageToFile(drawer.Bitmap, new SaveSettings("Images", filename, "png"));
-        action.Should().Throw<ArgumentException>();
+        action.Invoke().Error.Should().Be("Filename cannot be null or empty");
     }
 
     [TestCase("12\\")]
@@ -53,5 +54,6 @@ public class ImageSaverTest
         drawer.CreateImage(cloudLayouter.Rectangles);
         var action = () => imageSaver.SaveImageToFile(drawer.Bitmap, new SaveSettings("Images", filename, "png"));
         action.Should().Throw<ExternalException>();
+        #pragma warning restore CA1416
     }
 }

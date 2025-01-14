@@ -1,11 +1,9 @@
-using System.Runtime.Versioning;
 using TagsCloudVisualization.Interfaces;
 using TagsCloudVisualization.Models;
 using TagsCloudVisualization.Models.Settings;
 
 namespace TagsCloudVisualization.Generators;
 
-[SupportedOSPlatform("windows")]
 public class TagCloudImageGenerator(
     IImageSaver saver,
     SaveSettings saveSettings,
@@ -16,12 +14,14 @@ public class TagCloudImageGenerator(
 {
     public Result<None> GenerateCloud()
     {
+        #pragma warning disable CA1416
         fileReadersSelector
             .SelectFileReader()
             .Then(textReader => textReader.ReadText())
             .Then(GetWordsFrequency)
             .Then(GetWords)
             .Then(bitmapGenerator.GenerateBitmap)
+            #pragma warning restore CA1416
             .Then(bitmap => saver.SaveImageToFile(bitmap, saveSettings));
 
         return Result.Ok();

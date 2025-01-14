@@ -5,5 +5,5 @@ namespace TagsCloudVisualization.Interfaces;
 
 public interface IBitmapGenerator
 {
-    public Bitmap GenerateBitmap(IEnumerable<TagWord> words);
+    public Result<Bitmap> GenerateBitmap(IEnumerable<TagWord> words);
 }

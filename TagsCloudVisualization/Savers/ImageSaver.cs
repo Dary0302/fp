@@ -22,6 +22,7 @@ public class ImageSaver : IImageSaver
         #pragma warning disable CA1416
         bitmap.Save(Path.Combine(settings.FilePath, $"{settings.Filename}.{settings.Format}"), settings.ImageFormat);
         #pragma warning restore CA1416
+        
         Console.WriteLine($"Tag cloud visualization saved to: {Path.GetFullPath(Path.Combine(settings.FilePath, $"{settings.Filename}.{settings.Format}"))}");
 
         return Result.Ok(Path.Combine(settings.FilePath, $"{settings.Filename}.{settings.Format}"));
