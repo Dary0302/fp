@@ -1,16 +1,17 @@
 using System.Drawing;
 using TagsCloudVisualization.Interfaces;
+using TagsCloudVisualization.Models;
 using TagsCloudVisualization.Models.Settings;
 
 namespace TagsCloudVisualization.Savers;
 
 public class ImageSaver : IImageSaver
 {
-    public string SaveImageToFile(Bitmap bitmap, SaveSettings settings)
+    public Result<string> SaveImageToFile(Bitmap bitmap, SaveSettings settings)
     {
         if (string.IsNullOrWhiteSpace(settings.Filename))
         {
-            throw new ArgumentException("Filename cannot be null or empty");
+            return Result.Fail<string>("Filename cannot be null or empty");
         }
         
         if (!Directory.Exists(settings.FilePath))
@@ -23,6 +24,6 @@ public class ImageSaver : IImageSaver
         #pragma warning restore CA1416
         Console.WriteLine($"Tag cloud visualization saved to: {Path.GetFullPath(Path.Combine(settings.FilePath, $"{settings.Filename}.{settings.Format}"))}");
 
-        return Path.Combine(settings.FilePath, $"{settings.Filename}.{settings.Format}");
+        return Result.Ok(Path.Combine(settings.FilePath, $"{settings.Filename}.{settings.Format}"));
     }
 }

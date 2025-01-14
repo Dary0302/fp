@@ -3,10 +3,10 @@ using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
+using TagsCloudVisualization.CloudLayouters;
 using TagsCloudVisualization.Extension;
 using TagsCloudVisualization.Generators;
 using TagsCloudVisualization.Interfaces;
-using TagsCloudVisualization.Models.CloudLayouters;
 using TagsCloudVisualization.Savers;
 using TagsCloudVisualization.Visualizatiuons;
 
@@ -40,7 +40,7 @@ public class CircularCloudLayouterTest
         var nextRectangle = layouter.PutNextRectangle(new Size(10, 10));
 
         rectanglesForCrashTest = layouter.Rectangles;
-        nextRectangle.GetCenter().Should().Be(center);
+        nextRectangle.GetValueOrThrow().GetCenter().Should().Be(center);
     }
 
     [TestCase(0, 0)]
@@ -53,7 +53,7 @@ public class CircularCloudLayouterTest
         var layouter = new CircularCloudLayouter(mockPositionGenerator);
 
         var action = () => layouter.PutNextRectangle(new Size(sizeX, sizeY));
-        action.Should().Throw<ArgumentException>().WithMessage("Width and height should be greater than zero.");
+        action.Invoke().Error.Should().Be("Width and height should be greater than zero.");
     }
 
     [TestCase(1, 1, 10)]

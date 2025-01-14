@@ -1,6 +1,8 @@
+using TagsCloudVisualization.Models;
+
 namespace TagsCloudVisualization.Interfaces;
 
 public interface IFileReadersSelector
 {
-    public ITextReader SelectFileReader();
+    public Result<ITextReader> SelectFileReader();
 }

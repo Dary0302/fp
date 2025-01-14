@@ -19,14 +19,16 @@ public class BitmapGenerator(ICloudLayouter layouter, BitmapGeneratorSettings se
         {
             var font = new Font(settings.FontFamily, word.FontSize);
             var size = graphics.MeasureString(word.Word, font);
-            var rectangle = layouter.PutNextRectangle(size.ToSize());
-            var position = new PointF(rectangle.X + (rectangle.Width - size.Width) / 2,
-                rectangle.Y + (rectangle.Height - size.Height) / 2);
+            layouter.PutNextRectangle(size.ToSize())
+                .Then(rectangle => GetPosition(rectangle, size))
+                .Then(position => graphics.DrawString(word.Word, font, brush, position));
 
-            graphics.DrawString(word.Word, font, brush, position);
             #pragma warning restore CA1416
         }
 
         return bitmap;
     }
+    
+    private PointF GetPosition(Rectangle rectangle, SizeF size) =>
+        new(rectangle.X + (rectangle.Width - size.Width) / 2, rectangle.Y + (rectangle.Height - size.Height) / 2);
 }

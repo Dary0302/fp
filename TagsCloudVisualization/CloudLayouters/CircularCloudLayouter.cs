@@ -1,27 +1,31 @@
 ﻿using System.Drawing;
 using TagsCloudVisualization.Extension;
 using TagsCloudVisualization.Interfaces;
+using TagsCloudVisualization.Models;
 
-namespace TagsCloudVisualization.Models.CloudLayouters;
+namespace TagsCloudVisualization.CloudLayouters;
 
 public class CircularCloudLayouter(IPositionGenerator positionGenerator) : ICloudLayouter
 {
     public List<Rectangle> Rectangles { get; } = [];
     private readonly Point center = positionGenerator.Center;
 
-    public Rectangle PutNextRectangle(Size sizeRectangle)
+    public Result<Rectangle> PutNextRectangle(Size sizeRectangle)
     {
-        var rectangle = FindNextValidRectanglePosition(sizeRectangle);
-        rectangle = MoveRectangleCloserCenter(rectangle);
-        Rectangles.Add(rectangle);
+        var rectangle = FindNextValidRectanglePosition(sizeRectangle)
+            .Then(MoveRectangleCloserCenter);
+
+        Rectangles.Add(rectangle.Value);
 
         return rectangle;
     }
 
-    private Rectangle FindNextValidRectanglePosition(Size sizeRectangle)
+    private Result<Rectangle> FindNextValidRectanglePosition(Size sizeRectangle)
     {
         if (sizeRectangle.Width <= 0 || sizeRectangle.Height <= 0)
-            throw new ArgumentException("Width and height should be greater than zero.");
+        {
+            return Result.Fail<Rectangle>("Width and height should be greater than zero.");
+        }
 
         Rectangle rectangle;
 
@@ -32,7 +36,7 @@ public class CircularCloudLayouter(IPositionGenerator positionGenerator) : IClou
                 break;
         }
 
-        return rectangle;
+        return Result.Ok(rectangle);
     }
 
     private Rectangle MoveRectangleCloserCenter(Rectangle rectangle)
