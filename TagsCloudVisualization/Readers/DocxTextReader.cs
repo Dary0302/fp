@@ -1,22 +1,25 @@
 using NPOI.XWPF.UserModel;
 using TagsCloudVisualization.Interfaces;
+using TagsCloudVisualization.Models;
 using TagsCloudVisualization.Models.Settings;
 
 namespace TagsCloudVisualization.Readers;
 
 public class DocxTextReader(TextReaderSettings settings) : ITextReader
 {
-    public IEnumerable<string> ReadText()
+    public Result<IEnumerable<string>> ReadText()
     {
         using var doc = new XWPFDocument(File.OpenRead(settings.Path));
 
-        return doc.Paragraphs.Select(paragraph => paragraph.Text);
+        return Result.Of(() => doc.Paragraphs.Select(paragraph => paragraph.Text))
+            .OnFail(error => Result.Fail<IEnumerable<string>>($"The file cannot be read: {error}"));
     }
 
-    public IEnumerable<string> ReadText(string path)
+    public Result<IEnumerable<string>> ReadText(string path)
     {
         using var doc = new XWPFDocument(File.OpenRead(path));
 
-        return doc.Paragraphs.Select(paragraph => paragraph.Text);
+        return Result.Of(() => doc.Paragraphs.Select(paragraph => paragraph.Text))
+            .OnFail(error => Result.Fail<IEnumerable<string>>($"The file cannot be read: {error}"));
     }
 }

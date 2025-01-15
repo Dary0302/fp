@@ -1,4 +1,6 @@
-﻿namespace TagsCloudVisualization.Models;
+﻿using NPOI.SS.Formula.Functions;
+
+namespace TagsCloudVisualization.Models;
 
 public class None
 {
@@ -131,5 +133,11 @@ public static class Result
         string errorMessage)
     {
         return input.ReplaceError(err => errorMessage + ". " + err);
+    }
+    
+    public static Result<None> Combine(IEnumerable<Result<None>> results)
+    {
+        var errors = results.Where(r => !r.IsSuccess).Select(r => r.Error).ToList();
+        return errors.Count != 0 ? Fail<None>(string.Join(". ", errors)) : Ok();
     }
 }

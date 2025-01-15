@@ -23,6 +23,6 @@ public class DocxTextReaderTest
     public void ReadText()
     {
         var result = docxTextReader.ReadText();
-        result.Should().BeEquivalentTo(new List<string> { "test", "read", "text", "from", "docx", "file" });
+        result.GetValueOrThrow().Should().BeEquivalentTo(new List<string> { "test", "read", "text", "from", "docx", "file" });
     }
 }

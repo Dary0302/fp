@@ -1,6 +1,8 @@
+using TagsCloudVisualization.Models;
+
 namespace TagsCloudVisualization.Interfaces;
 
 public interface ITextFilter
 {
-    public IEnumerable<string> ApplyFilter(IEnumerable<string> text);
+    public Result<IEnumerable<string>> ApplyFilter(IEnumerable<string> text);
 }

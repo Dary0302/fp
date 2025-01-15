@@ -15,19 +15,16 @@ public class BitmapGenerator(ICloudLayouter layouter, BitmapGeneratorSettings se
         using var graphics = Graphics.FromImage(bitmap);
         graphics.Clear(settings.Background);
         var brush = new SolidBrush(settings.WordsColor);
-
-        foreach (var word in words)
-        {
-            var font = new Font(settings.FontFamily, word.FontSize);
-            var size = graphics.MeasureString(word.Word, font);
-            layouter.PutNextRectangle(size.ToSize())
+        var results = from word in words
+            let font = new Font(settings.FontFamily, word.FontSize)
+            let size = graphics.MeasureString(word.Word, font)
+            select layouter.PutNextRectangle(size.ToSize())
                 .Then(rectangle => GetPosition(rectangle, size))
                 .Then(CheckIsOutOfBoundsBitmap)
-                .OnFail(error => throw new ValueOutOfRangeException(error))
                 .Then(position => graphics.DrawString(word.Word, font, brush, position));
-        }
 
-        return Result.Ok(bitmap);
+        var combinedResult = Result.Combine(results);
+        return combinedResult.IsSuccess ? Result.Ok(bitmap) : Result.Fail<Bitmap>(combinedResult.Error);
         #pragma warning restore CA1416
     }
 
@@ -41,6 +38,6 @@ public class BitmapGenerator(ICloudLayouter layouter, BitmapGeneratorSettings se
             return Result.Ok(position);
         }
 
-        return Result.Fail<PointF>("Word is out of bounds of bitmap.");
+        return Result.Fail<PointF>($"Word is out of bounds of bitmap with point: {position}");
     }
 }

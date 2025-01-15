@@ -61,8 +61,8 @@ public class TagCloudImageGeneratorTests
         };
 
         var action = () => bitmapGenerator.GenerateBitmap(words);
-
-        action.Should().Throw<ValueOutOfRangeException>();
+        
+        action.Invoke().Error.Should().Contain("Word is out of bounds of bitmap");
     }
 
     private static bool CompareImages(Bitmap img1, Bitmap img2)

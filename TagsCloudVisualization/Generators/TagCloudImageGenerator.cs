@@ -39,7 +39,7 @@ public class TagCloudImageGenerator(
 
     private Dictionary<string, int> GetWordsFrequency(IEnumerable<string> text) =>
         filters
-            .Aggregate(text, (word, filter) => filter.ApplyFilter(word))
+            .Aggregate(text, (word, filter) => filter.ApplyFilter(word).GetValueOrThrow())
             .GroupBy(w => w)
             .OrderByDescending(words => words.Count())
             .ToDictionary(words => words.Key, words => words.Count());

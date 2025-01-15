@@ -33,7 +33,7 @@ public class FiltersTest
 
         var words = new List<string> { "a", "the", "hello", "WoRlD", "hI" };
         var result = filters.Aggregate(words.AsEnumerable(),
-            (currentWords, filter) => filter.ApplyFilter(currentWords));
+            (currentWords, filter) => filter.ApplyFilter(currentWords).GetValueOrThrow());
 
         result.Should().BeEquivalentTo(new List<string> { "world", "hi" });
     }
@@ -55,7 +55,7 @@ public class FiltersTest
         var words = new List<string> { firstWord, secondWord };
         var result = filter.ApplyFilter(words);
 
-        result.Should().BeEquivalentTo(new List<string> { resultFirstWord, resultSecondWord });
+        result.GetValueOrThrow().Should().BeEquivalentTo(new List<string> { resultFirstWord, resultSecondWord });
     }
 
     [TestCase("a", "the", "hello", "world")]
@@ -74,7 +74,7 @@ public class FiltersTest
         var words = new List<string> { firstBoringWord, secondBoringWord, firstWord, secondWord };
         var result = filter.ApplyFilter(words);
 
-        result.Should().BeEquivalentTo(new List<string> { firstWord, secondWord });
+        result.GetValueOrThrow().Should().BeEquivalentTo(new List<string> { firstWord, secondWord });
     }
 
     [TestCase("a", "the", "hello", "world", "ow")]
@@ -96,7 +96,7 @@ public class FiltersTest
         var result = filter.ApplyFilter(words);
 
         filter.BoringWords.Should().BeEquivalentTo(new List<string> { boringWord, firstBoringWord, secondBoringWord });
-        result.Should().BeEquivalentTo(new List<string> { firstWord, secondWord });
+        result.GetValueOrThrow().Should().BeEquivalentTo(new List<string> { firstWord, secondWord });
     }
 
     [TestCase("a", "hello", "world")]
@@ -113,7 +113,7 @@ public class FiltersTest
         var result = filter.ApplyFilter(words);
 
         filter.BoringWords.Should().BeEquivalentTo(new List<string> { boringWord });
-        result.Should().BeEquivalentTo(new List<string> { firstWord, secondWord });
+        result.GetValueOrThrow().Should().BeEquivalentTo(new List<string> { firstWord, secondWord });
     }
 
     [TestCase("a", "the", "hello", "world")]
@@ -134,7 +134,7 @@ public class FiltersTest
         var result = filter.ApplyFilter(words);
 
         filter.BoringWords.Should().BeEquivalentTo(new List<string> { boringWord });
-        result.Should().BeEquivalentTo(new List<string> { firstBoringWord, firstWord, secondWord });
+        result.GetValueOrThrow().Should().BeEquivalentTo(new List<string> { firstBoringWord, firstWord, secondWord });
     }
 
     [TestCase("a", "the", "hello", "world", "ow")]
@@ -156,7 +156,7 @@ public class FiltersTest
         var result = filter.ApplyFilter(words);
 
         filter.BoringWords.Should().BeEquivalentTo(new List<string> { boringWord });
-        result.Should().BeEquivalentTo(new List<string> { firstBoringWord, secondBoringWord, firstWord, secondWord });
+        result.GetValueOrThrow().Should().BeEquivalentTo(new List<string> { firstBoringWord, secondBoringWord, firstWord, secondWord });
     }
 
     [TestCase("a", "the", "hello", "world")]
@@ -177,6 +177,6 @@ public class FiltersTest
         var result = filter.ApplyFilter(words);
 
         filter.BoringWords.Should().BeEmpty();
-        result.Should().BeEquivalentTo(new List<string> { firstBoringWord, secondBoringWord, firstWord, secondWord });
+        result.GetValueOrThrow().Should().BeEquivalentTo(new List<string> { firstBoringWord, secondBoringWord, firstWord, secondWord });
     }
 }

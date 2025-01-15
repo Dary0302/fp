@@ -23,6 +23,6 @@ public class TxtTextReaderTest
     public void ReadText()
     {
         var result = txtTextReader.ReadText();
-        result.Should().BeEquivalentTo(new List<string> { "test", "read", "text", "from", "txt", "file" });
+        result.GetValueOrThrow().Should().BeEquivalentTo(new List<string> { "test", "read", "text", "from", "txt", "file" });
     }
 }
